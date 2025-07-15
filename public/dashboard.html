@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+    .card {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    h2 {
+      color: #333;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>👤 Thông tin cá nhân</h2>
+    <label>Tên đăng nhập</label>
+    <input type="text" id="username" placeholder="Tên đăng nhập" />
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="Email" />
+
+    <label>Số điện thoại</label>
+    <input type="text" id="phone" placeholder="Số điện thoại" />
+
+    <button onclick="updateProfile()">Lưu thay đổi</button>
+    <div id="message" class="message"></div>
+  </div>
+
+  <div class="card" style="margin-top: 40px;">
+    <h3>🔐 Đổi mật khẩu</h3>
+    <input type="password" id="currentPassword" placeholder="Mật khẩu hiện tại" />
+    <input type="password" id="newPassword" placeholder="Mật khẩu mới" />
+    <button onclick="changePassword()">Đổi mật khẩu</button>
+    <div id="passMessage" class="message"></div>
+  </div>
+
+  <div class="card" style="margin-top: 40px; text-align: center;">
+    <button id="logoutBtn">Đăng xuất</button>
+  </div>
+
+  <!-- ✅ Gắn script sau toàn bộ DOM -->
+  <script src="/js/logout.js"></script>
+  <script src="/js/dashboard.js" type="module"></script>
+  <div id="navbar"></div>
+
+<!-- Nội dung chính -->
+
+<div id="footer"></div>
+
+</body>
+</html>
+<script type="module">
+  import { loadPartials } from "/js/partials-loader.js";
+
+  loadPartials([
+    { id: "navbar", url: "/partials/navbar.html", callback: initNavbar },
+    { id: "footer", url: "/partials/footer.html" }
+  ]);
+
+  function initNavbar() {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        alert("👋 Đã đăng xuất!");
+        window.location.href = "login.html";
+      });
+    }
+
+    // Ví dụ: Thay tên user bằng localStorage
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const nameEl = document.getElementById("userName");
+    if (nameEl && user?.username) {
+      nameEl.textContent = user.username;
+    }
+  }
+</script>
+

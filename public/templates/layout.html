@@ -1,0 +1,42 @@
+<body>
+  <div id="navbar"></div>
+
+  <main id="content"></main>
+
+  <div id="footer"></div>
+
+  <script type="module">
+    import { loadPartials } from "/js/partials-loader.js";
+
+    loadPartials([
+      {
+        id: "navbar",
+        url: "/partials/navbar.html",
+        callback: initNavbar
+      },
+      {
+        id: "footer",
+        url: "/partials/footer.html"
+      }
+    ]);
+
+    async function initNavbar() {
+      const token = localStorage.getItem("token");
+
+      if (!token) return;
+
+      try {
+        const res = await fetch("/api/users/profile", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        const data = await res.json();
+
+        if (data?.user?.role === "admin") {
+          document.getElementById("adminMenu")?.removeAttribute("style");
+        }
+      } catch (err) {
+        console.error("Lỗi khi kiểm tra role:", err);
+      }
+    }
+  </script>
+</body>

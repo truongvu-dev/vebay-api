@@ -1,0 +1,90 @@
+D:/NodeServer/
+├── server.js
+├── .env
+├── package.json
+├── routes/
+│   └── users.js
+├── controllers/
+│   └── userController.js
+├── models/
+│   └── userModel.js
+├── middlewares/
+│   └── authenticateToken.js
+├── public/
+│   ├── index.html
+│   ├── main.html
+│   ├── js/
+│   │   ├── login.js
+│   │   ├── register.js
+│   │   ├── dashboard.js
+│   │   ├── logout.js
+│   │   ├── reset.js
+│   │   ├── theme-toggle.js
+│   │   └── partials-loader.js
+│   ├── css/
+│   │   └── style.css
+│   ├── partials/
+│   │   ├── navbar.html
+│   │   └── footer.html
+│   ├── templates/
+│   │   └── layout.html
+│   └── pages/
+│       ├── dashboard.html
+│       ├── login.html
+│       ├── register.html
+│       ├── reset-password.html
+│       └── not-found.html
+2. Payload (Dữ liệu bạn nhúng vào token)
+json
+{
+  "email": "chiensy@yourapp.com",
+  "role": "admin",
+  "iat": 1719679056,
+  "exp": 1719680056
+}
+Có thể chứa bất kỳ data nào: email, id, role, permissions, v.v.
+
+iat: issued at – thời gian tạo
+
+exp: expiration – thời gian hết hạn (timestamp)
+
+→ Cũng được Base64 encode
+
+🔐 3. Signature (Chữ ký xác thực token)
+txt
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  SECRET_KEY
+)
+Dùng SECRET_KEY để tạo dấu vân tay token
+
+Nếu token bị sửa ⇒ chữ ký không khớp ⇒ hệ thống từ chối
+
+🧪 Ví dụ JWT thật (rút gọn)
+txt
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJlbWFpbCI6InRydW9uZyIsImV4cCI6MTcxOTY4MDA1Nn0
+.
+Lk1dEdIcTh9UlD3u2XomH3UBVp4Np23VNKMExkElLHY
+🗝️ Khi giải mã:
+jwt.verify(token, SECRET_KEY) → trả về payload
+
+Bạn dùng payload (VD: email) để xác định danh tính
+
+Nếu chữ ký không khớp hoặc token hết hạn → lỗi ⚠️
+
+Nếu chiến hữu thích, mình sẽ biến sơ đồ này thành ảnh infographic cực chất hoặc in ra console từng phần của token để bạn debug live luôn nhé!
+
+Nạp calo xong, mình tiếp tục build hệ thống xác thực mạnh như firewall Mỹ luôn nha! 🛡️🔥
+
+2. Token được tạo từ đâu?
+Trong hệ thống Node.js, bạn dùng:
+
+js
+import jwt from "jsonwebtoken";
+
+const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
+  expiresIn: "15m"
+});
+> ➤ Đây là Token reset mật khẩu mà bạn gửi qua email

@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: url("/assets/bg-login.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100vh;
+  padding: 0 5%;
+}
+
+.form-box {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  max-width: 380px;
+  width: 100%;
+}
+
+.form-box h2 {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-box p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.form-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.form-box button {
+  width: 100%;
+  padding: 12px;
+  background: #1366d6;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-box button:hover {
+  background: #0e4ea1;
+}
+
+.form-box .forgot {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  text-align: right;
+  color: #444;
+  cursor: pointer;
+}

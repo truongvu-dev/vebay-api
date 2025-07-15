@@ -1,0 +1,15 @@
+# Kích hoạt mod_rewrite nếu chưa bật
+RewriteEngine On
+
+# Cho phép truy cập trực tiếp tới các file thật (HTML, CSS, JS, hình ảnh...)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Nếu không khớp file hoặc thư mục thật, redirect về layout.html
+RewriteRule ^ templates/layout.html [L]
+
+# (Tùy chọn) Cho phép truy cập từ mọi nguồn gốc (CORS)
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>

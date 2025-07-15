@@ -1,0 +1,28 @@
+import websocket
+
+# Hàm xử lý khi nhận dữ liệu từ server
+def on_message(ws, message):
+    print(f"📩 Dữ liệu từ server: {message}")
+
+# Hàm xử lý khi có lỗi xảy ra
+def on_error(ws, error):
+    print(f"❌ Lỗi WebSocket: {error}")
+
+# Hàm xử lý khi kết nối bị đóng
+def on_close(ws, close_status_code, close_msg):
+    print("🔴 Kết nối WebSocket đã đóng!")
+
+# Hàm xử lý khi WebSocket kết nối thành công
+def on_open(ws):
+    print("✅ WebSocket đã kết nối!")
+
+# Tạo WebSocket và thiết lập các hàm xử lý sự kiện
+ws = websocket.WebSocketApp("wss://api.vemaybay.one/noti/socket.io/?userId=1006684",
+                            on_message=on_message,
+                            on_error=on_error,
+                            on_close=on_close)
+
+ws.on_open = on_open
+
+# Luôn lắng nghe dữ liệu từ server
+ws.run_forever()

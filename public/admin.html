@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      padding: 30px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    h2 {
+      color: #333;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin: 10px 0;
+    }
+    button {
+      padding: 6px 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="adminContent">Đang tải...</div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) location.href = "/";
+
+    fetch("/api/users/profile", {
+      headers: { Authorization: "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const user = data.user;
+      if (user.role !== "admin") {
+        alert("Bạn không có quyền truy cập trang này!");
+        location.href = "/";
+        return;
+      }
+
+      let features = `
+        <li><button onclick="manageUsers()">🛠 Quản lý người dùng</button></li>
+        <li><button onclick="viewStats()">📊 Xem thống kê hệ thống</button></li>
+      `;
+
+      document.getElementById("adminContent").innerHTML = `
+        <h2>🎩 Xin chào, ${user.name} (Admin)</h2>
+        <p><strong>Email:</strong> ${user.email}</p>
+        <p><strong>Vai trò:</strong> ${user.role}</p>
+        <hr />
+        <h3>🔧 Tính năng quản trị:</h3>
+        <ul>${features}</ul>
+        <br />
+        <button onclick="logout()">Đăng xuất</button>
+      `;
+    })
+    .catch(() => {
+      localStorage.removeItem("token");
+      location.href = "/";
+    });
+
+    function logout() {
+      localStorage.removeItem("token");
+      alert("Đã đăng xuất!");
+      location.href = "/";
+    }
+
+    function manageUsers() {
+      alert("⚙️ Chức năng quản lý người dùng đang được phát triển.");
+      // 👉 Sau này có thể: location.href = "/admin-users.html";
+    }
+
+    function viewStats() {
+      alert("📊 Tính năng thống kê đang được bổ sung.");
+    }
+  </script>
+  <button id="logoutBtn">Đăng xuất</button>
+  <script src="/js/logout.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<button id="viewProfileBtn">Xem Profile</button>
+<div id="profileInfo"></div>
+
+<script type="module">
+  import { viewProfile } from "/js/view-profile.js";
+
+  document.getElementById("viewProfileBtn").addEventListener("click", () => {
+    viewProfile("profileInfo");
+  });
+</script>

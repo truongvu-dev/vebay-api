@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đăng nhập</title>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 2rem; }
+    .box {
+      max-width: 400px; margin: auto; background: white; padding: 2rem;
+      border-radius: 8px; box-shadow: 0 0 10px #ccc;
+    }
+    h2 { text-align: center; margin-bottom: 1.5rem; }
+    input, button {
+      width: 100%; padding: 10px; margin-top: 10px;
+    }
+    button {
+      background: #4caf50; color: white; border: none; cursor: pointer;
+    }
+    .message {
+      margin-top: 1rem; text-align: center; font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔐 Đăng nhập hệ thống</h2>
+    <form id="loginForm">
+      <input type="text" id="identity" placeholder="Tên đăng nhập / Email / SĐT" required />
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+      <button type="submit">Đăng nhập</button>
+    </form>
+    <div class="message" id="message"></div>
+    <div style="text-align: center; margin-top: 1rem;">
+      <a href="reset-password.html">Quên mật khẩu?</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const identity = document.getElementById("identity").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!identity || !password) {
+        message.textContent = "⚠️ Vui lòng nhập đầy đủ thông tin.";
+        message.style.color = "red";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ identity, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          localStorage.setItem("token", data.token);
+          message.style.color = "green";
+          message.textContent = "🎉 Đăng nhập thành công! Đang chuyển hướng...";
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1500);
+        } else {
+          message.style.color = "red";
+          message.textContent = data.message || "Đăng nhập thất bại.";
+        }
+      } catch (err) {
+        console.error(err);
+        message.textContent = "🚫 Không thể kết nối đến máy chủ.";
+        message.style.color = "red";
+      }
+    });
+  </script>
+  <div id="navbar"></div>
+
+<!-- Nội dung chính -->
+
+<div id="footer"></div>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>
+<script>
+  async function loadPartial(id, url) {
+    const res = await fetch(url);
+    const html = await res.text();
+    document.getElementById(id).innerHTML = html;
+  }
+
+  loadPartial("navbar", "/partials/navbar.html");
+  loadPartial("footer", "/partials/footer.html");
+</script>
+<script type="module">
+  import { loadPartial } from "/js/partials-loader.js";
+  loadPartial("navbar", "/partials/navbar.html");
+  loadPartial("footer", "/partials/footer.html");
+</script>

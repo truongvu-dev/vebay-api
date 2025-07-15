@@ -1,0 +1,9 @@
+<div id="dtc-plugin" data-flight-url="/flight" data-key="DTC11062"></div>
+<script type="text/javascript">
+(function () {
+    var dtcScript = document.createElement('script');
+    dtcScript.src = 'https://plg.datacom.vn/js/plugin.js';
+    dtcScript.setAttribute('asp-append-version', 'true');
+    document.head.appendChild(dtcScript);
+})();
+</script>

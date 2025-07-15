@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký tài khoản</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+    }
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px #ccc;
+    }
+    h2 { text-align: center; color: #333; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .success { color: green; margin-top: 10px; }
+    .error { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📝 Đăng ký người dùng</h2>
+    <form id="registerForm">
+      <input type="text" id="regName" placeholder="Họ tên của bạn" required />
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="text" id="regPhone" placeholder="Số điện thoại" required />
+      <button type="submit">Đăng ký</button>
+    </form>
+
+    <div id="loading" style="display:none; color:blue; margin-top:10px;">
+      ⏳ Đang xử lý...
+    </div>
+    <div id="registerMessage"></div>
+
+    <p style="text-align:center;">
+      Đã có tài khoản? <a href="/">Đăng nhập</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const loading = document.getElementById("loading");
+    const message = document.getElementById("registerMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.textContent = "";
+      loading.style.display = "block";
+
+      const username = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+
+      try {
+        const res = await fetch("/api/users/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, phone })
+        });
+
+        const data = await res.json();
+        loading.style.display = "none";
+        message.textContent = data.message || "Không xác định.";
+        message.className = res.ok ? "success" : "error";
+      } catch (err) {
+        loading.style.display = "none";
+        message.textContent = "Lỗi kết nối đến máy chủ.";
+        message.className = "error";
+        console.error(err);
+      }
+    });
+  </script>
+  <div id="navbar"></div>
+
+<!-- Nội dung chính -->
+
+<div id="footer"></div>
+
+  <script src="/js/register.js"></script>
+</body>
+</html>
+<script>
+  async function loadPartial(id, url) {
+    const res = await fetch(url);
+    const html = await res.text();
+    document.getElementById(id).innerHTML = html;
+  }
+
+  loadPartial("navbar", "/partials/navbar.html");
+  loadPartial("footer", "/partials/footer.html");
+</script>
+<script>
+  async function loadPartial(id, url) {
+    const res = await fetch(url);
+    const html = await res.text();
+    document.getElementById(id).innerHTML = html;
+  }
+
+  loadPartial("navbar", "/partials/navbar.html");
+  loadPartial("footer", "/partials/footer.html");
+</script>
