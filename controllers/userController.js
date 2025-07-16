@@ -1,7 +1,7 @@
 import db from "../project-root/config/db.js"; // ✅ tương tự
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { sendVerificationEmail } from "../utils/sendMail.js"; // nhớ tạo file này như đã hướng dẫn
+import { sendVerificationEmail } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
 
 // 🔐 Đăng nhập

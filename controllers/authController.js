@@ -1,7 +1,7 @@
 import db from "../project-root/config/db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import nodemailer from "nodemailer";
+import { transporter } from "../utils/mailer.js";
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -19,13 +19,7 @@ export const forgotPassword = async (req, res) => {
     const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: "15m" });
     const resetLink = `${process.env.BASE_URL}/reset-password-confirm.html?token=${token}`;
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD
-      }
-    });
+  
 
     const mailOptions = {
       from: `"Xác thực" <${process.env.MAIL_USER}>`,
@@ -39,14 +33,15 @@ export const forgotPassword = async (req, res) => {
       `
     };
 
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error("❌ Lỗi gửi mail:", err);
-        return res.status(500).json({ message: "Không gửi được email." });
-      }
-      console.log(`📨 Đã gửi mail reset tới ${user.email}`);
-      res.status(200).json({ message: "📧 Liên kết khôi phục đã được gửi đến email!" });
-    });
+    try {
+  await sendMail(mailOptions);
+  console.log(`📨 Đã gửi mail reset tới ${user.email}`);
+  res.status(200).json({ message: "📧 Liên kết khôi phục đã được gửi đến email!" });
+} catch (err) {
+  console.error("❌ Lỗi gửi mail:", err);
+  res.status(500).json({ message: "Không gửi được email." });
+}
+
   } catch (err) {
     console.error("🔥 Lỗi forgotPassword:", err);
     res.status(500).json({ message: "Lỗi máy chủ." });
@@ -59,7 +54,9 @@ export const resetPassword = async (req, res) => {
     return res.status(400).json({ message: "Thiếu token hoặc mật khẩu." });
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const JWT_SECRET = process.env.JWT_SECRET;
+    const decoded = jwt.verify(token, JWT_SECRET);
+
     const [rows] = await db.query(`SELECT * FROM users WHERE email = ?`, [decoded.email]);
     if (rows.length === 0)
       return res.status(404).json({ message: "Không tìm thấy người dùng." });
